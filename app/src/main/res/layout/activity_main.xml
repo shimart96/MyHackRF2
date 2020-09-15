@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+tools:context="com.s33me.myhackrf.MainActivity" >
+<LinearLayout
+    android:id="@+id/bt_box"
+    android:background="#efefef"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginBottom="5dp"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    >
+<Button
+    android:id="@+id/bt_openHackRF"
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+   android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:onClick="openHackrf"
+    android:background="@drawable/ic_baseline_usb_24" />
+
+<Button
+    android:id="@+id/bt_info"
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_toRightOf="@+id/bt_openHackRF"
+    android:background="@drawable/ic_outline_info_24"
+    android:onClick="info" />
+
+<Button
+    android:id="@+id/bt_rx"
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_toRightOf="@+id/bt_info"
+    android:background="@drawable/ic_outline_keyboard_arrow_down_24"
+    android:onClick="rx" />
+
+<Button
+    android:id="@+id/bt_tx"
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_toRightOf="@+id/bt_rx"
+    android:background="@drawable/ic_outline_keyboard_arrow_up_24"
+    android:onClick="tx" />
+
+<Button
+    android:id="@+id/bt_stop"
+    android:layout_width="0dip"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/bt_tx"
+    android:background="@drawable/ic_outline_stop_24"
+    android:onClick="stop" />
+
+</LinearLayout>
+
+<TextView
+    android:id="@+id/tv_sampRateLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/bt_box"
+    android:layout_alignBaseline="@+id/et_sampRate"
+    android:text="SampRate: " />
+
+<EditText
+    android:id="@+id/et_sampRate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/tv_sampRateLabel"
+    android:layout_below="@+id/bt_box"
+    android:layout_alignParentRight="true"
+    android:ems="10"
+    android:inputType="number"
+    android:text="2000000" />
+
+<TextView
+    android:id="@+id/tv_freqLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/et_sampRate"
+    android:layout_alignBaseline="@+id/et_freq"
+    android:text="Freq: " />
+
+<EditText
+    android:id="@+id/et_freq"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/tv_freqLabel"
+    android:layout_below="@+id/et_sampRate"
+    android:layout_alignParentRight="true"
+    android:ems="10"
+    android:inputType="number"
+    android:text="97000000" />
+
+<TextView
+    android:id="@+id/tv_filename"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/et_filename"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/et_freq"
+    android:text="File: " />
+
+<EditText
+    android:id="@+id/et_filename"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/tv_filename"
+    android:layout_below="@+id/et_freq"
+    android:layout_alignParentRight="true"
+    android:text="hackrf_android.iq" />
+
+<TextView
+    android:id="@+id/tv_vgaGain"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/sb_vgaGain"
+    android:layout_alignParentLeft="true"
+    android:text="vgaGain: " />
+
+<SeekBar
+    android:id="@+id/sb_vgaGain"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/et_filename"
+    android:layout_toRightOf="@+id/tv_vgaGain"
+    android:max="100"
+    android:progress="40" />
+
+<TextView
+    android:id="@+id/tv_lnaGain"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/sb_lnaGain"
+    android:layout_alignParentLeft="true"
+    android:text="lnaGain: " />
+
+<SeekBar
+    android:id="@+id/sb_lnaGain"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/sb_vgaGain"
+    android:layout_toRightOf="@+id/tv_lnaGain"
+    android:max="100"
+    android:progress="60" />
+
+<CheckBox
+    android:id="@+id/cb_amp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/sb_lnaGain"
+    android:text="Amp: " />
+
+<CheckBox
+    android:id="@+id/cb_antenna"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/sb_lnaGain"
+    android:text="Load: " />
+
+<TextView
+    android:id="@+id/tv_output"
+    android:background="#efefef"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/cb_amp"
+    android:autoLink="web"
+    android:linksClickable="true"
+    android:scrollbars="vertical" />
+
+</RelativeLayout>
