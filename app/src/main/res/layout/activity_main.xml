@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="true">
+<RelativeLayout
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
@@ -44,7 +49,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:layout_toRightOf="@+id/bt_info"
-    android:background="@drawable/ic_outline_keyboard_arrow_down_24"
+    android:background="@drawable/ic_baseline_arrow_downward_24"
     android:onClick="rx" />
 
 <Button
@@ -53,7 +58,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:layout_toRightOf="@+id/bt_rx"
-    android:background="@drawable/ic_outline_keyboard_arrow_up_24"
+    android:background="@drawable/ic_baseline_arrow_upward_24"
     android:onClick="tx" />
 
 <Button
@@ -62,120 +67,300 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_weight="1"
     android:layout_height="wrap_content"
     android:layout_toRightOf="@+id/bt_tx"
-    android:background="@drawable/ic_outline_stop_24"
+    android:background="@drawable/ic_baseline_close_24"
     android:onClick="stop" />
 
 </LinearLayout>
-
+    <LinearLayout
+        android:id="@+id/samp_box"
+        android:layout_below="@+id/bt_box"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
 <TextView
     android:id="@+id/tv_sampRateLabel"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     android:layout_alignParentLeft="true"
     android:layout_below="@+id/bt_box"
     android:layout_alignBaseline="@+id/et_sampRate"
-    android:text="SampRate: " />
+    android:text="Sample Rate:" />
+<TextView
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_alignParentLeft="true"
+    android:text="Max=20M" />
 
 <EditText
     android:id="@+id/et_sampRate"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
-    android:layout_toRightOf="@+id/tv_sampRateLabel"
-    android:layout_below="@+id/bt_box"
-    android:layout_alignParentRight="true"
+    android:layout_weight="1"
+    android:layout_alignParentLeft="true"
     android:ems="10"
     android:inputType="number"
     android:text="2000000" />
+</LinearLayout>
+    <TextView
+        android:id="@+id/instructions1"
+        android:layout_below="@+id/samp_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Pre-select frequency." />
+    <LinearLayout
+        android:id="@+id/freq_ck_box1"
+        android:layout_below="@+id/instructions1"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+        <CheckBox
+            android:id="@+id/drone1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="2.4GHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/drone2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="5.8GHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/drone3"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="3.4GHz"
+            android:onClick="onCheckboxClicked"/>
 
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/freq_ck_box2"
+        android:layout_below="@+id/freq_ck_box1"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+        <CheckBox
+            android:id="@+id/bluetooth"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="2.483GHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/harbor_fan"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="304MHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/simplex"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="146.52MHz"
+            android:onClick="onCheckboxClicked"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/freq_ck_box3"
+        android:layout_below="@+id/freq_ck_box2"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+        <CheckBox
+            android:id="@+id/keyfob"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="433.9MHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/tpms"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="315MHz"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/simplex2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:text="446MHz"
+            android:onClick="onCheckboxClicked"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/instructions2"
+        android:layout_below="@+id/freq_ck_box3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Edit frequency as desired." />
+        <Button
+            android:id="@+id/fcc_button"
+            android:layout_alignParentRight="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="FCC Lookup"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/freq_box"
+        android:layout_below="@+id/instructions2"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
 <TextView
     android:id="@+id/tv_freqLabel"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     android:layout_alignParentLeft="true"
-    android:layout_below="@+id/et_sampRate"
+    android:layout_below="@+id/samp_box"
     android:layout_alignBaseline="@+id/et_freq"
-    android:text="Freq: " />
+    android:text="Frequency " />
 
 <EditText
     android:id="@+id/et_freq"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     android:layout_toRightOf="@+id/tv_freqLabel"
-    android:layout_below="@+id/et_sampRate"
     android:layout_alignParentRight="true"
     android:ems="10"
-    android:inputType="number"
-    android:text="97000000" />
-
+    android:inputType="number" />
+</LinearLayout>
+    <LinearLayout
+        android:id="@+id/file_box"
+        android:layout_below="@+id/freq_box"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
 <TextView
     android:id="@+id/tv_filename"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     android:layout_alignBaseline="@+id/et_filename"
     android:layout_alignParentLeft="true"
-    android:layout_below="@+id/et_freq"
-    android:text="File: " />
+    android:layout_below="@+id/freq_box"
+    android:text="Save to file: " />
 
 <EditText
     android:id="@+id/et_filename"
-    android:layout_width="wrap_content"
+    android:layout_width="0dip"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     android:layout_toRightOf="@+id/tv_filename"
-    android:layout_below="@+id/et_freq"
     android:layout_alignParentRight="true"
     android:text="hackrf_android.iq" />
-
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/vga_box"
+        android:layout_below="@+id/file_box"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+       >
 <TextView
     android:id="@+id/tv_vgaGain"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/sb_vgaGain"
     android:layout_alignParentLeft="true"
-    android:text="vgaGain: " />
+    android:text="VGA Gain: " />
 
 <SeekBar
     android:id="@+id/sb_vgaGain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentRight="true"
-    android:layout_below="@+id/et_filename"
+    android:layout_below="@+id/file_box"
     android:layout_toRightOf="@+id/tv_vgaGain"
     android:max="100"
     android:progress="40" />
-
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lna_box"
+        android:layout_below="@+id/vga_box"
+        android:background="#efefef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        >
 <TextView
     android:id="@+id/tv_lnaGain"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/sb_lnaGain"
     android:layout_alignParentLeft="true"
-    android:text="lnaGain: " />
+    android:text="LNA Gain: " />
 
 <SeekBar
     android:id="@+id/sb_lnaGain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentRight="true"
-    android:layout_below="@+id/sb_vgaGain"
+    android:layout_below="@+id/vga_box"
     android:layout_toRightOf="@+id/tv_lnaGain"
     android:max="100"
     android:progress="60" />
-
+    </LinearLayout>
 <CheckBox
     android:id="@+id/cb_amp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
-    android:layout_below="@+id/sb_lnaGain"
-    android:text="Amp: " />
+    android:layout_below="@+id/lna_box"
+    android:text="Amplifier" />
 
 <CheckBox
     android:id="@+id/cb_antenna"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentRight="true"
-    android:layout_below="@+id/sb_lnaGain"
-    android:text="Load: " />
+    android:layout_below="@+id/lna_box"
+    android:text="Antenna Power" />
 
 <TextView
     android:id="@+id/tv_output"
@@ -185,9 +370,10 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_alignParentBottom="true"
     android:layout_alignParentLeft="true"
     android:layout_alignParentRight="true"
+    android:layout_marginTop="5dp"
     android:layout_below="@+id/cb_amp"
     android:autoLink="web"
     android:linksClickable="true"
     android:scrollbars="vertical" />
-
 </RelativeLayout>
+</ScrollView>
