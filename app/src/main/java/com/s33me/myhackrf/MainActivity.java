@@ -1,6 +1,7 @@
 package com.s33me.myhackrf;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -76,6 +77,10 @@ import java.util.concurrent.TimeUnit;
 Martin Fernandez modified the UI, icon, build.gradle, AndroidManifest, activity_main,
 et al. for the purpose of running this application on an Android 10 device.
 Added Try/Catch with Toast messages to prevent crashes when no HackRF is plugged in.
+
+June 6 2021 Changing external directory to app's default rather than to SD card default
+Using TRY CATCH to quick dirty fix null pointer crash on XML attributes when app is first
+installed and opened.  The null pointer does not occur again once app has been used?
  */
 public class MainActivity extends AppCompatActivity implements Runnable, HackrfCallbackInterface{
 
@@ -83,29 +88,32 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
     private static final int PERMISSION_REQUEST_READ_FILES = 101;
 
     // References to the GUI elements:
-    private Button bt_openHackRF = null;
-    private Button bt_info = null;
-    private Button bt_rx = null;
-    private Button bt_tx = null;
-    private Button bt_stop = null;
-    private Button fcc_lookup = null;
-    private EditText et_sampRate = null;
-    private EditText et_freq = null;
-    private EditText et_filename = null;
-    private SeekBar sb_vgaGain = null;
-    private SeekBar sb_lnaGain = null;
-    private CheckBox cb_amp = null;
-    private CheckBox cb_antenna = null;
+    //6-4-2021 Used to all be initialized to null.
+    //         removed null initialization
+    private Button bt_openHackRF;
+    private Button bt_info;
+    private Button bt_rx;
+    private Button bt_tx;
+    private Button bt_stop;
+    private Button fcc_lookup;
+    private EditText et_sampRate;
+    private EditText et_freq;
+    private EditText et_filename;
+    private SeekBar sb_vgaGain;
+    private SeekBar sb_lnaGain;
+    private CheckBox cb_amp;
+    private CheckBox cb_antenna;
     // 9-16-2020 added by Martin
     private CheckBox drone1, drone2, drone3, bluetooth, harbor_fan, simplex, simplex2, keyfob, tpms;
-    private TextView tv_output = null;
+    private TextView tv_output;
 
     // Reference to the hackrf instance:
-    private Hackrf hackrf = null;
+    private Hackrf hackrf;
 
     private int sampRate = 0;
     private long frequency = 0;
-    private String filename = null;
+    // See filename hard coded in activity_main
+    private String filename = "hackrf_android.iq";
     private int vgaGain = 0;
     private int lnaGain = 0;
     //9-16-2020 added by Martin
@@ -118,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
     private final long simplex2_freq = 446000000L;
     private final long keyfob_freq = 433900000L;
     private final long tpms_freq = 315000000L;
+    //6-4-2021 added default freq for edit text to avoid null ptr
+    private final String default_freq = "350000000";
     private boolean amp = false;
     private boolean antennaPower = false;
 
@@ -147,18 +157,23 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeGui();
         final int REQUEST_PERMISSIONS = 20;
         // Unnecessary since targeting 28+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                         Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
+
+
             } else {
                 // Start logging:
                 try {
-                    logfile = new File(Environment.getExternalStorageDirectory() + "/" + foldername, "log.txt");
+                    //logfile = new File(Environment.getExternalStorageDirectory() + "/" + foldername, "log.txt");
+                    // 6-3-2021 resolving EACCESS denied
+                    logfile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + foldername, "log.txt");
                     logfile.getParentFile().mkdir();    // Create folder
                     logcat = Runtime.getRuntime().exec("logcat -f " + logfile.getAbsolutePath());
                     Log.i("MainActivity", "onCreate: log path: " + logfile.getAbsolutePath());
@@ -170,62 +185,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
                     //Log.e("MainActivity", "onCreate: Failed to start logging!");
                 }
 
-                // Create a Handler instance to use in other threads:
-                try {
-                    handler = new Handler();
-                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(),"Handler Thread error" , Toast.LENGTH_SHORT).show();
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                //Log.e("MainActivity", "onCreate: Failed to start logging!");
-                }
 
-                // Initialize the GUI references:
-                bt_info = ((Button) this.findViewById(R.id.bt_info));
-                bt_rx = ((Button) this.findViewById(R.id.bt_rx));
-                bt_tx = ((Button) this.findViewById(R.id.bt_tx));
-                bt_stop = ((Button) this.findViewById(R.id.bt_stop));
-                bt_openHackRF = ((Button) this.findViewById(R.id.bt_openHackRF));
-                fcc_lookup = ((Button) this.findViewById(R.id.fcc_button));
-                et_sampRate = (EditText) this.findViewById(R.id.et_sampRate);
-                et_freq = (EditText) this.findViewById(R.id.et_freq);
-                et_filename = (EditText) this.findViewById(R.id.et_filename);
-                sb_vgaGain = (SeekBar) this.findViewById(R.id.sb_vgaGain);
-                sb_lnaGain = (SeekBar) this.findViewById(R.id.sb_lnaGain);
-                cb_amp = (CheckBox) this.findViewById(R.id.cb_amp);
-                cb_antenna = (CheckBox) this.findViewById(R.id.cb_antenna);
-                //9-16-2020
-                drone1 = (CheckBox) this.findViewById(R.id.drone1);
-                drone2 = (CheckBox) this.findViewById(R.id.drone2);
-                drone3 = (CheckBox) this.findViewById(R.id.drone3);
-                bluetooth = (CheckBox) this.findViewById(R.id.bluetooth);
-                harbor_fan = (CheckBox) this.findViewById(R.id.harbor_fan);
-                simplex = (CheckBox) this.findViewById(R.id.simplex);
-                simplex2 = (CheckBox) this.findViewById(R.id.simplex2);
-                keyfob = (CheckBox) this.findViewById(R.id.keyfob);
-                tpms = (CheckBox) this.findViewById(R.id.tpms);
-                tv_output = (TextView) findViewById(R.id.tv_output);
-                tv_output.setMovementMethod(new ScrollingMovementMethod());    // make it scroll!
-                this.toggleButtonsEnabledIfHackrfReady(false);    // Disable all buttons except for 'Open HackRF'
-                //9-18-2020 Added by Martin
-                fcc_lookup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                        intent.setData(Uri.parse("http://fcc.io/"));
-                        startActivity(intent);
-                    }
-                });
-                // Print Hello
-                String version = "";
-                try {
-                    version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-                } catch (NameNotFoundException e) {
-                }
-                this.tv_output.setText("Test_HackRF (version " + version + ") by Dennis Mantz\n9-15-2020 Modified by Martin Fernandez to run on Android Pie +\n");
+
 
                 // Check for the WRITE_EXTERNAL_STORAGE permission (needed for logging):
                 if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE")
@@ -233,7 +194,70 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
                     printOnScreen("Warning: Logfile cannot be written (no Storage Permission)!\n");
                 }
             }
+        //}
+    }
+    public void initializeGui() {
+        // Create a Handler instance to use in other threads:
+        try {
+            handler = new Handler();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),"Handler Thread error" , Toast.LENGTH_SHORT).show();
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+            //Log.e("MainActivity", "onCreate: Failed to start logging!");
         }
+        bt_info = ((Button) this.findViewById(R.id.bt_info));
+        bt_rx = ((Button) this.findViewById(R.id.bt_rx));
+        bt_tx = ((Button) this.findViewById(R.id.bt_tx));
+        bt_stop = ((Button) this.findViewById(R.id.bt_stop));
+        bt_openHackRF = ((Button) this.findViewById(R.id.bt_openHackRF));
+        fcc_lookup = ((Button) this.findViewById(R.id.fcc_button));
+        //6-4-2021 default in acitivity_main is android:text="20000000"
+        et_sampRate = (EditText) this.findViewById(R.id.et_sampRate);
+        // 6-4-2021 default in activity_main is android:text="350000000"
+        et_freq = (EditText) this.findViewById(R.id.et_freq);
+        // 6-4-2021 set to default in code to avoid null pointer on first open
+        //et_freq.setText(default_freq);
+        //6-6-2021 changed to hint in xml
+        et_filename = (EditText) this.findViewById(R.id.et_filename);
+        sb_vgaGain = (SeekBar) this.findViewById(R.id.sb_vgaGain);
+        sb_lnaGain = (SeekBar) this.findViewById(R.id.sb_lnaGain);
+        cb_amp = (CheckBox) this.findViewById(R.id.cb_amp);
+        cb_antenna = (CheckBox) this.findViewById(R.id.cb_antenna);
+        //9-16-2020
+        drone1 = (CheckBox) this.findViewById(R.id.drone1);
+        drone2 = (CheckBox) this.findViewById(R.id.drone2);
+        drone3 = (CheckBox) this.findViewById(R.id.drone3);
+        bluetooth = (CheckBox) this.findViewById(R.id.bluetooth);
+        harbor_fan = (CheckBox) this.findViewById(R.id.harbor_fan);
+        simplex = (CheckBox) this.findViewById(R.id.simplex);
+        simplex2 = (CheckBox) this.findViewById(R.id.simplex2);
+        keyfob = (CheckBox) this.findViewById(R.id.keyfob);
+        tpms = (CheckBox) this.findViewById(R.id.tpms);
+        tv_output = (TextView) this.findViewById(R.id.tv_output);
+        tv_output.setMovementMethod(new ScrollingMovementMethod());    // make it scroll!
+        //6-7-2021  toggleButtonsEnabled depends on handler thread process
+        this.toggleButtonsEnabledIfHackrfReady(false);    // Disable all buttons except for 'Open HackRF'
+        //9-18-2020 Added by Martin
+        fcc_lookup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://fcc.io/"));
+                startActivity(intent);
+            }
+        });
+        // Print Hello
+        String version = "";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+        }
+        this.tv_output.setText("Test_HackRF (version " + version + ") by Dennis Mantz\n9-15-2020 Modified by Martin Fernandez to run on Android Pie +\n");
+
     }
 
     @Override
@@ -255,28 +279,38 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_help) {
-            this.tv_output.setText(Html.fromHtml(getResources().getString(R.string.helpText)));
-            return true;
-        }
-        if (id == R.id.action_showLog) {
-            try {
-                Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", logfile);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(uri, "text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                this.startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(),"Unable to show log" , Toast.LENGTH_SHORT).show();
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
+        // 6-04-2021 surrounding try catch to handle first time app use
+        try {
+            int id = item.getItemId();
+            if (id == R.id.action_help) {
+                this.tv_output.setText(Html.fromHtml(getResources().getString(R.string.helpText)));
+                return true;
             }
-            return true;
+            if (id == R.id.action_showLog) {
+                try {
+                    Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", logfile);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri, "text/plain");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    this.startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Unable to show log", Toast.LENGTH_SHORT).show();
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),"First time app opened? Press HELP again." , Toast.LENGTH_SHORT).show();
+            Log.d("help error", e.toString());
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
         }
-        return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -366,78 +400,101 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
      */
     public void readGuiElements()
     {
-        sampRate = Integer.valueOf(et_sampRate.getText().toString());
-        frequency = Long.valueOf(et_freq.getText().toString());
-        filename = et_filename.getText().toString();
-        vgaGain = sb_vgaGain.getProgress();
-        lnaGain = sb_lnaGain.getProgress();
-        amp = cb_amp.isChecked();
-        antennaPower = cb_antenna.isChecked();
+        // 6-4-2021 surrounding try catch to address reported crash on google console
+        try {
+            sampRate = Integer.valueOf(et_sampRate.getText().toString());
+            frequency = Long.valueOf(et_freq.getText().toString());
+            filename = et_filename.getText().toString();
+            vgaGain = sb_vgaGain.getProgress();
+            lnaGain = sb_lnaGain.getProgress();
+            amp = cb_amp.isChecked();
+            antennaPower = cb_antenna.isChecked();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),"Error detected. Setting default samp rate to 20M and frequency to 350MHz" , Toast.LENGTH_LONG).show();
+            sampRate = 20000000;
+            frequency = 350000000;
+
+        }
     }
     public void onCheckboxClicked(View view) {
         //9-16-2020 added by Martin
         //This will autopopulate the Edit text field for frequency
         // Is the view now checked?
         boolean checked = ((CheckBox) view).isChecked();
+        // 6-4-2021 surrounded with try catch because first time open of app was not
+        //          recognizing the onClick method with is defined in xml
+        //          also null pointer on et_freq
+        //          quick and dirty fix. will resolve later
+        //          Not really using check box as intended. They are just like options
+        //          could of used a spinner instead
+        // 6-9-2021 Resolved null pointer on new install and first open
+        //          with initializeGui() method
+        try {
+            switch (view.getId()) {
 
-        switch(view.getId()) {
-
-            case R.id.drone1:
-                if (checked) {
-                    et_freq.setText(String.valueOf(drone1_freq));
-                    drone1.toggle();
-                }
-                break;
-            case R.id.drone2:
-                if (checked) {
-                    et_freq.setText(String.valueOf(drone2_freq));
-                    drone2.toggle();
-                }
-                break;
-            case R.id.drone3:
-                if (checked) {
-                    et_freq.setText(String.valueOf(drone3_freq));
-                    drone3.toggle();
-                }
-                break;
-            case R.id.bluetooth:
-                if (checked) {
-                    et_freq.setText(String.valueOf(bluetooth_freq));
-                    bluetooth.toggle();
-                }
-                break;
-            case R.id.harbor_fan:
-                if (checked) {
-                    et_freq.setText(String.valueOf(fan_freq));
-                    harbor_fan.toggle();
-                }
-                break;
-            case R.id.simplex:
-                if (checked) {
-                    et_freq.setText(String.valueOf(simplex_freq));
-                    simplex.toggle();
-                }
-                break;
-            case R.id.simplex2:
-                if (checked) {
-                    et_freq.setText(String.valueOf(simplex2_freq));
-                    simplex2.toggle();
-                }
-                break;
-            case R.id.keyfob:
-                if (checked) {
-                    et_freq.setText(String.valueOf(keyfob_freq));
-                    keyfob.toggle();
-                }
-                break;
-            case R.id.tpms:
-                if (checked) {
-                    et_freq.setText(String.valueOf(tpms_freq));
-                    tpms.toggle();
-                }
-                break;
-            default:
-                //et_freq.setText(String.valueOf((int)simplex_freq));
+                case R.id.drone1:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(drone1_freq));
+                        drone1.toggle();
+                    }
+                    break;
+                case R.id.drone2:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(drone2_freq));
+                        drone2.toggle();
+                    }
+                    break;
+                case R.id.drone3:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(drone3_freq));
+                        drone3.toggle();
+                    }
+                    break;
+                case R.id.bluetooth:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(bluetooth_freq));
+                        bluetooth.toggle();
+                    }
+                    break;
+                case R.id.harbor_fan:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(fan_freq));
+                        harbor_fan.toggle();
+                    }
+                    break;
+                case R.id.simplex:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(simplex_freq));
+                        simplex.toggle();
+                    }
+                    break;
+                case R.id.simplex2:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(simplex2_freq));
+                        simplex2.toggle();
+                    }
+                    break;
+                case R.id.keyfob:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(keyfob_freq));
+                        keyfob.toggle();
+                    }
+                    break;
+                case R.id.tpms:
+                    if (checked) {
+                        this.et_freq.setText(String.valueOf(tpms_freq));
+                        tpms.toggle();
+                    }
+                    break;
+                default:
+                    //et_freq.setText(String.valueOf((int)simplex_freq));
+            }
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),"Check input fields" , Toast.LENGTH_SHORT).show();
+            Log.d("checkbox error", e.toString());
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
         }
     }
 
@@ -458,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
                 tv_output.append("No HackRF could be found!\n");
             }
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(),"Plug in the HackRF !" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Check if USB driver needed or Plug in the HackRF !" , Toast.LENGTH_SHORT).show();
             Intent intent = getIntent();
             finish();
             startActivity(intent);
@@ -473,12 +530,20 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
      *
      * @param view		Reference to the calling View (in this case bt_info)
      */
+    //6-9-2021 This is called from onClick in the XML layout file
+    // surround with Try Catch to prevent null pointer crash
     public void info(View view)
     {
-        if (hackrf != null)
-        {
-            this.task = PRINT_INFO;
-            new Thread(this).start();
+        try {
+            if (hackrf != null) {
+                this.task = PRINT_INFO;
+                new Thread(this).start();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),"Check if USB driver needed or first plug in the HackRF !" , Toast.LENGTH_SHORT).show();
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
         }
     }
 
@@ -683,7 +748,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
             if(filename.equals(""))
                 file = new File("/dev/", "null");
             else
-                file = new File(Environment.getExternalStorageDirectory() + "/" + foldername, filename);
+                //file = new File(Environment.getExternalStorageDirectory() + "/" + foldername, filename);
+                //6-3-2021 resolving EACCESS (permission denied)
+                file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + foldername, filename);
             file.getParentFile().mkdir();	// Create folder if it does not exist
             printOnScreen("Saving samples to " + file.getAbsolutePath() + "\n");
 
@@ -811,7 +878,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
             }
 
             // Open a file ...
-            File file = new File(Environment.getExternalStorageDirectory() + "/" + foldername, filename);
+            //File file = new File(Environment.getExternalStorageDirectory() + "/" + foldername, filename);
+            //6-3-2021 resolving EACCESS (permission denied)
+            File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + foldername, filename);
             printOnScreen("Reading samples from " + file.getAbsolutePath() + "\n");
             if(!file.exists())
             {
@@ -894,3 +963,4 @@ public class MainActivity extends AppCompatActivity implements Runnable, HackrfC
         }
     }
 }
+

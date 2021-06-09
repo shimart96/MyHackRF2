@@ -21,20 +21,22 @@
     <string name="helpText">
         <![CDATA[
 	        <h1>== HELP ==</h1>
-	        September 15, 2020 Modified by Martin at msf455@gmail.com.<br />
+	        Original code by Dennis Mantz
+	        2021 Modified by Martin at msf455@gmail.com.<br />
 	        <li>Updated libraries and targeted latest Android build</li>
 	        <li>Changed text buttons to symbols</li>
 	        <li>Fit buttons to the screen in portrait</li>
 	        <li>Cleaned up launcher icon</li>
+	        <li>Added preselect on frequency</li>
 
-	        This is the example application delivered with the <i>hackrf_android</i> library. Its intention 
-	        is to demonstrate the functionality of the library and to provide running example code.<br /><br />
-			To use this App you need a HackRF connected to your device via an OTG USB cable. Press <b>USB</b>,
+	        Use this to record the signal coming off a radio, key fob or remote control. Adjust the sample rate which is defaulted to the 20M max
+	        Connect a HackRF to your device via an OTG USB cable.
+			You may need to install an Android RTL-SDR driver app. Press app <b>USB</b> symbol,
 			give the App the permissions to open the USB device and hit <b>Info</b> to read out the Board ID, 
 			Version, Part ID and Serial Number from your device. <font size="+3"><strong>&#8681;</strong></font> will start receiving samples at the
-			given sample rate and store them to a file on your SD card. If you leave the filename blank, all 
-			samples will go to <i>/dev/null</i>. With <font size="+3"><strong>&#8679;</strong></font> you can transmit a previously recorded file.<br /><br />
-			<font size="+3"<strong>&#9633;</strong></font> will stop either recording/receiving and transmitting of the saved file.<br /><br />
+			given sample rate and store them to a file on your SD card. Do not leave the filename blank. The default is hackrf_android.iq. With <font size="+3"><strong>&#8679;</strong></font> you can transmit a previously recorded file.<br /><br />
+			<font size="+3"<strong>&#9633;</strong></font> will stop either recording/receiving and transmitting of the saved file.
+			The hackrf_android.iq file is in the HackRF app default documents data directory, for example Android/data/com.s33me.myhackrf/files/Documents/Test_HackRF/. To transmit the recorded signal file, maximize the VGA gain and minimize LNA. <br /><br />
 			For more information on how to use hackrf_android in your own application see <br />
 			http://tech.mantz-it.com/2014/10/hackrfandroid-using-hackrf-with-android.html <br /><br />
 			Get the latest version (binaries and sources) from the Github repository: <br />

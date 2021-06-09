@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -7,7 +17,7 @@
 <RelativeLayout
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
-android:layout_height="match_parent"
+android:layout_height="wrap_content"
 android:paddingBottom="@dimen/activity_vertical_margin"
 android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
@@ -18,7 +28,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:background="#efefef"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
     android:layout_marginBottom="5dp"
     android:orientation="horizontal"
@@ -29,8 +39,6 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-   android:layout_alignParentLeft="true"
-    android:layout_alignParentTop="true"
     android:onClick="openHackrf"
     android:background="@drawable/ic_baseline_usb_24" />
 
@@ -39,7 +47,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_toRightOf="@+id/bt_openHackRF"
+    android:layout_toEndOf="@+id/bt_openHackRF"
     android:background="@drawable/ic_outline_info_24"
     android:onClick="info" />
 
@@ -48,7 +56,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_toRightOf="@+id/bt_info"
+    android:layout_toEndOf="@+id/bt_info"
     android:background="@drawable/ic_baseline_arrow_downward_24"
     android:onClick="rx" />
 
@@ -57,7 +65,6 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_toRightOf="@+id/bt_rx"
     android:background="@drawable/ic_baseline_arrow_upward_24"
     android:onClick="tx" />
 
@@ -66,7 +73,6 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_weight="1"
     android:layout_height="wrap_content"
-    android:layout_toRightOf="@+id/bt_tx"
     android:background="@drawable/ic_baseline_close_24"
     android:onClick="stop" />
 
@@ -85,15 +91,11 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/bt_box"
-    android:layout_alignBaseline="@+id/et_sampRate"
     android:text="Sample Rate:" />
 <TextView
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_alignParentLeft="true"
     android:text="Max=20M" />
 
 <EditText
@@ -101,17 +103,16 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_alignParentLeft="true"
     android:ems="10"
     android:inputType="number"
-    android:text="2000000" />
+    android:text="20000000" />
 </LinearLayout>
     <TextView
         android:id="@+id/instructions1"
         android:layout_below="@+id/samp_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:text="Pre-select frequency." />
     <LinearLayout
         android:id="@+id/freq_ck_box1"
@@ -127,7 +128,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="2.4GHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -135,7 +136,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="5.8GHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -143,7 +144,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="3.4GHz"
             android:onClick="onCheckboxClicked"/>
 
@@ -162,7 +163,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="2.483GHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -170,7 +171,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="304MHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -178,7 +179,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="146.52MHz"
             android:onClick="onCheckboxClicked"/>
     </LinearLayout>
@@ -196,7 +197,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="433.9MHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -204,7 +205,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="315MHz"
             android:onClick="onCheckboxClicked"/>
         <CheckBox
@@ -212,7 +213,7 @@ tools:context="com.s33me.myhackrf.MainActivity" >
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_alignParentLeft="true"
+            android:checked="false"
             android:text="446MHz"
             android:onClick="onCheckboxClicked"/>
 
@@ -226,11 +227,9 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:text="Edit frequency as desired." />
+        android:text="Target device FCC ID" />
         <Button
             android:id="@+id/fcc_button"
-            android:layout_alignParentRight="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="FCC Lookup"/>
@@ -249,19 +248,15 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/samp_box"
-    android:layout_alignBaseline="@+id/et_freq"
-    android:text="Frequency " />
+    android:text="Record-transmit frequency " />
 
 <EditText
     android:id="@+id/et_freq"
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_toRightOf="@+id/tv_freqLabel"
-    android:layout_alignParentRight="true"
     android:ems="10"
+    android:hint="350000000"
     android:inputType="number" />
 </LinearLayout>
     <LinearLayout
@@ -278,18 +273,13 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_alignBaseline="@+id/et_filename"
-    android:layout_alignParentLeft="true"
-    android:layout_below="@+id/freq_box"
-    android:text="Save to file: " />
+    android:text="Android/data/com.s33me.myhackrf/files/Documents/Test_HackRF/" />
 
 <EditText
     android:id="@+id/et_filename"
     android:layout_width="0dip"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:layout_toRightOf="@+id/tv_filename"
-    android:layout_alignParentRight="true"
     android:text="hackrf_android.iq" />
     </LinearLayout>
     <LinearLayout
@@ -305,17 +295,12 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:id="@+id/tv_vgaGain"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignBottom="@+id/sb_vgaGain"
-    android:layout_alignParentLeft="true"
     android:text="VGA Gain: " />
 
 <SeekBar
     android:id="@+id/sb_vgaGain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
-    android:layout_below="@+id/file_box"
-    android:layout_toRightOf="@+id/tv_vgaGain"
     android:max="100"
     android:progress="40" />
     </LinearLayout>
@@ -332,17 +317,12 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:id="@+id/tv_lnaGain"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignBottom="@+id/sb_lnaGain"
-    android:layout_alignParentLeft="true"
     android:text="LNA Gain: " />
 
 <SeekBar
     android:id="@+id/sb_lnaGain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
-    android:layout_below="@+id/vga_box"
-    android:layout_toRightOf="@+id/tv_lnaGain"
     android:max="100"
     android:progress="60" />
     </LinearLayout>
@@ -350,7 +330,8 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:id="@+id/cb_amp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:checked="false"
     android:layout_below="@+id/lna_box"
     android:text="Amplifier" />
 
@@ -358,8 +339,9 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:id="@+id/cb_antenna"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
     android:layout_below="@+id/lna_box"
+    android:checked="false"
     android:text="Antenna Power" />
 
 <TextView
@@ -368,8 +350,8 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentRight="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentEnd="true"
     android:layout_marginTop="5dp"
     android:layout_below="@+id/cb_amp"
     android:autoLink="web"
@@ -377,3 +359,5 @@ tools:context="com.s33me.myhackrf.MainActivity" >
     android:scrollbars="vertical" />
 </RelativeLayout>
 </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
